@@ -1,0 +1,166 @@
+<html>
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #e1b178;
+        font-family: 'Nerko One', cursive;
+    }
+
+    h1 {
+        font-size: 80px;
+        margin-bottom: 0;
+        text-transform: uppercase;
+    }
+
+    .container {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #board {
+        width: 60vw;
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 100px;
+        margin-top: 40px;
+    }
+
+    .box {
+        height: 20vh;
+        width: 20vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #restart {padding: 20px 30px;
+        background-color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        color: #e1b178;
+        font-size: 30px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+</style>
+<body>
+
+<div class="container">
+    <h1 id="result"></h1>
+    <button id="restart">Restart</button>
+    <div id="board">
+        <div class="box" id="0"></div>
+        <div class="box" id="1"></div>
+        <div class="box" id="2"></div>
+        <div class="box" id="3"></div>
+        <div class="box" id="4"></div>
+        <div class="box" id="5"></div>
+        <div class="box" id="6"></div>
+        <div class="box" id="7"></div>
+        <div class="box" id="8"></div>
+    </div>
+</div>
+</body>
+<script>
+    let boxes = document.querySelectorAll('.box');
+    let result = document.querySelector('#result');
+    let restartBtn = document.querySelector('#restart');
+
+    const tickCircle = 'O';
+    const tickX = 'X';
+    let blockArr = [];
+    let currentPlayer = tickCircle;
+
+    const drawBoard = () => {
+        boxes.forEach((box, i) => {
+            let styleString = '';
+            if (i < 3) {
+                styleString += 'border-bottom: 3px solid #000000;';
+            }
+            if (i % 3 === 0) {
+                styleString += 'border-right: 3px solid #000000;';
+            }
+            if (i % 3 === 2) {
+                styleString += 'border-left: 3px solid #000000;';
+            }
+            if (i > 5) {
+                styleString += 'border-top: 3px solid #000000;';
+            }
+            box.style = styleString;
+            box.addEventListener('click', boxClicked);
+        });
+    };
+
+    const boxClicked = (e) => {
+        const id = e.target.id;
+        // console.log(id);
+        if (!blockArr[id]) {
+            console.log(blockArr);
+            blockArr[id] = currentPlayer;
+            e.target.innerText = currentPlayer;
+
+            if (playerWon() || playerDraw()) {
+                return;
+            }
+            console.log(blockArr);
+            currentPlayer = currentPlayer === tickCircle ? tickX : tickCircle;
+        }
+    };
+
+    const playerWon = () => {
+        if (blockArr[0] === currentPlayer) {
+            if ((blockArr[1] === currentPlayer && blockArr[2] === currentPlayer) || (blockArr[3] === currentPlayer && blockArr[6] === currentPlayer) ||
+                (blockArr[4] === currentPlayer && blockArr[8] === currentPlayer)) {
+                result.innerText = `${currentPlayer} wins`;
+                return true;
+            }
+        }
+        if (blockArr[4] === currentPlayer) {
+            if ((blockArr[1] === currentPlayer && blockArr[7] === currentPlayer) || (blockArr[3] === currentPlayer && blockArr[5] === currentPlayer) ||
+                (blockArr[2] === currentPlayer && blockArr[6] === currentPlayer)) {
+                result.innerText = `${currentPlayer} wins`;
+                return true;
+            }
+        }
+        if (blockArr[8] === currentPlayer) {
+            if ((blockArr[2] === currentPlayer && blockArr[5] === currentPlayer) || (blockArr[6] === currentPlayer && blockArr[7] === currentPlayer)) {
+                result.innerText = `${currentPlayer} wins`;
+                return true;
+            }
+        }
+    };
+
+    const playerDraw = () => {
+        let draw = 0;
+        blockArr.forEach((space, i) => {
+            if (blockArr[i] !== null) draw++;
+        });
+        if (draw === 9) {
+            result.innerText = `Draw`;
+            // restart();
+        }
+    };
+
+    const restart = () => {
+        blockArr = [];
+        result.innerText = ``;
+        boxes.forEach((box) => {
+            box.innerText = '';
+        });
+    };
+    restartBtn.addEventListener('click', restart);
+    restart();
+    drawBoard();
+</script>
+</html>

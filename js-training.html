@@ -1,0 +1,173 @@
+<html>
+<style>
+    container {
+        border: 1px solid #cccccc;
+        box-shadow: 10px 10px 30px 0px rgba(0, 0, 0, 0.75);
+        border-radius: 20px;
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 450px;
+        height: 400px;
+    }
+
+    .keys {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+        padding: 10px;
+        margin: auto;
+    }
+
+    .button {
+        border-radius: 3px;
+        border: 1px solid #c4c4c4;
+        font-size: 1.5rem;
+        color: #333;
+        background-color: gainsboro;
+    }
+
+    .button:hover {
+        background-color: #eaeaea;
+    }
+
+    .operator {
+        color: #fff;
+        background-color: #eebb24;
+        border: none;
+        font-size: 20px;
+    }
+
+    .clear {
+        background-color: #f0595f;
+        border-color: #b0353a;
+        color: #fff;
+        width: 100px;
+        height: 42px;
+        border: none;
+        float: right;
+        margin-right: 20px;
+    }
+
+    .equal-sign {
+        background-color: #25a8e0;
+        border-color: #25a8e0;
+        color: #fff;
+    }
+
+    .screen {
+        color: black;
+        font-size: medium;
+        width: 80%;
+        cursor: default;
+        padding: 10px;
+        margin: auto;
+        margin-bottom: 10px;
+    }
+</style>
+<body>
+<h1>JS Tests</h1>
+<div class="container">
+    <div>
+        <input type='text' id='result' class='screen' style="text-align: right;">
+        <input type='button' value='C' onclick="clearScreen()" class="clear"/>
+    </div>
+    <div class="keys">
+        <input type="button" value="7" class="button" onClick="display('7')"/>
+        <input type="button" value="8" class="button " onClick="display('8')"/>
+        <input type="button" value="9" class="button" onClick="display('9')"/>
+        <input type="button" value="/" class="operator" onClick="display('/')"/>
+        <input type="button" value="4" class="button" onClick="display('4')"/>
+        <input type="button" value="5" class="button" onClick="display('5')"/>
+        <input type="button" value="6" class="button" onClick="display('6')"/>
+        <input type="button" value="*" class="operator" onClick="display('*')"/>
+        <input type="button" value="1" class="button" onClick="display('1')"/>
+        <input type="button" value="2" class="button" onClick="display('2')"/>
+        <input type="button" value="3" class="button" onClick="display('3')"/>
+        <input type="button" value="-" class="operator" onClick="display('-')"/>
+        <input type="button" value="0" class="button" onClick="display('0')"/>
+        <input type="button" value="." class="button" onClick="display('.')"/>
+        <input type="button" value="=" class="button equal-sign" onClick="equal()"/>
+        <input type="button" value="+" class="operator" onClick="display('+')"/>
+    </div>
+</div>
+</body>
+<script>
+    /*example 1: valid expression*/
+    function isValidExp(s) {
+        let temp = [];
+        for (let i = 0; i < s.length; i++) {
+            if (s[i] === '(') {
+                temp.push(s[i]);
+            } else if (s[i] === ')' && temp.length !== 0 && temp[temp.length - 1] === '(') {
+                temp.pop();
+            } else {
+                return false;
+            }
+        }
+        return temp.length === 0;
+    };
+    console.log(isValidExp('()()'));
+
+    /*example 2: prototype function*/
+    Array.prototype.doubleVal = function () {
+        for (let i = 0; i < this.length; i++) {
+            this[i] = this[i] * 2;
+        }
+        return this;
+    };
+    let arr = [1, 2, 3, 4];
+    console.log(arr.doubleVal());
+
+    /*example 3: calculator*/
+    function display(val) {
+        let x = document.getElementById('result').value;
+        let temp = document.getElementById('result').value + val;
+        console.log(temp.match('/^\\d{1,}(\\.\\d{1,})?[-+*/]\\d{1,}(\\.\\d{1,})?$/'),temp)
+        console.log(/^(\d+(\.\d*)?((?<=\d)[+*/-]|$))*$/.test(temp),temp)
+        if (/^(\d+(\.\d*)?((?<=\d)[+*/-]|$))*$/.test(temp)) {
+            document.getElementById('result').value += val;
+        }
+        return val;
+    }
+    function clearScreen() {
+        document.getElementById('result').value = ''
+    }
+    function equal() {
+        let x = document.getElementById('result').value;
+        let y = eval(x);
+        console.log(x, y);
+        document.getElementById('result').value = y;
+        return y;
+    }
+
+    /*example 4: shallow and deep copy*/
+    let a = [1, 2, 3];
+    let b = a;
+    b[0] = 11;
+    console.log('shallow copy', a, b);
+    let c = [1, 2, 3];
+    let d = [...c];
+    d[0] = 11;
+    console.log('deep copy', c, d);
+
+    /*example 5: chunk array in groups*/
+    function chunkArrayInGroups(items, size) {
+        return items.reduce((result, item, index) => {
+            // console.log(result,item,index);
+            const chunkIndex = Math.floor(index / size);
+
+            if (!result[chunkIndex]) {
+                result[chunkIndex] = [];
+            }
+            result[chunkIndex].push(item);
+            return result;
+        }, []);
+    }
+
+    console.log(chunkArrayInGroups(["a", "b", "c", "d"], 3));
+    console.log(chunkArrayInGroups([0, 1, 2, 3, 4, 5], 3));
+    console.log(chunkArrayInGroups([0, 1, 2, 3, 4, 5], 2));
+</script>
+</html>
